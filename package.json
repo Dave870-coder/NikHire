@@ -1,0 +1,31 @@
+{
+  "name": "nikhire",
+  "version": "1.0.0",
+  "description": "Campus Recruitment System - A web-based platform for connecting students with job opportunities",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server",
+    "dev": "http-server -p 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "recruitment",
+    "campus",
+    "jobs",
+    "students",
+    "career"
+  ],
+  "author": "Dave870-coder",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dave870-coder/NikHire.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Dave870-coder/NikHire/issues"
+  },
+  "homepage": "https://github.com/Dave870-coder/NikHire#readme"
+}
