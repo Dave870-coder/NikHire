@@ -4,8 +4,9 @@
   "description": "Campus Recruitment System - A web-based platform for connecting students with job opportunities",
   "main": "index.html",
   "scripts": {
-    "start": "http-server",
-    "dev": "http-server -p 8000",
+    "server": "node server.js",
+    "client": "http-server",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -18,14 +19,24 @@
   "author": "Dave870-coder",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "http-server": "^14.1.1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dave870-coder/NikHire.git"
+    "url": "git+https://github.com/Dave870-coder/NikHire.git"
   },
   "bugs": {
     "url": "https://github.com/Dave870-coder/NikHire/issues"
   },
-  "homepage": "https://github.com/Dave870-coder/NikHire#readme"
+  "homepage": "https://github.com/Dave870-coder/NikHire#readme",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3"
+  }
 }

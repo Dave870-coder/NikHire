@@ -1,269 +1,24 @@
-// Mock Database using localStorage
-class MockDatabase {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        if (!localStorage.getItem('users')) {
-            localStorage.setItem('users', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('jobs')) {
-            localStorage.setItem('jobs', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('applications')) {
-            localStorage.setItem('applications', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('tasks')) {
-            localStorage.setItem('tasks', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('institutions')) {
-            localStorage.setItem('institutions', JSON.stringify([
-                "Ahmadu Bello University",
-                "Babcock University",
-                "Bayero University",
-                "Covenant University",
-                "Federal University of Technology, Akure",
-                "Lagos State University",
-                "Nigerian Defence Academy",
-                "Nnamdi Azikiwe University",
-                "Obafemi Awolowo University",
-                "University of Abuja",
-                "University of Benin",
-                "University of Calabar",
-                "University of Ibadan",
-                "University of Ilorin",
-                "University of Jos",
-                "University of Lagos",
-                "University of Maiduguri",
-                "University of Nigeria",
-                "University of Port Harcourt",
-                "University of Uyo",
-                "Afe Babalola University",
-                "American University of Nigeria",
-                "Bells University of Technology",
-                "Benson Idahosa University",
-                "Bowen University",
-                "Caleb University",
-                "Caritas University",
-                "Chrisland University",
-                "Crescent University",
-                "Elizade University",
-                "Evan Enwerem University",
-                "Fountain University",
-                "Godfrey Okoye University",
-                "Gregory University",
-                "Igbinedion University",
-                "Joseph Ayo Babalola University",
-                "Kwararafa University",
-                "Landmark University",
-                "Lead City University",
-                "Madonna University",
-                "McPherson University",
-                "Micheal Okpara University of Agriculture",
-                "Mountain Top University",
-                "Nile University of Nigeria",
-                "Novena University",
-                "Oduduwa University",
-                "Pan-Atlantic University",
-                "Redeemer's University",
-                "Renaissance University",
-                "Rhema University",
-                "Ritman University",
-                "Salem University",
-                "Samuel Adegboyega University",
-                "Southwestern University",
-                "Tansian University",
-                "Veritas University",
-                "Wellspring University",
-                "Wesley University",
-                "Western Delta University",
-                "Achievers University",
-                "Ajayi Crowther University",
-                "Al-Hikmah University",
-                "Al-Qalam University",
-                "Augustine University",
-                "Baze University",
-                "Bingham University",
-                "Crawford University",
-                "Dominion University",
-                "Edwin Clark University",
-                "Federal University, Dutse",
-                "Federal University, Dutsin-Ma",
-                "Federal University, Kashere",
-                "Federal University, Lafia",
-                "Federal University, Lokoja",
-                "Federal University, Oye-Ekiti",
-                "Federal University, Wukari"
-            ]));
-        }
-    }
-
-    getUsers() {
-        return JSON.parse(localStorage.getItem('users'));
-    }
-
-    getUserByEmail(email) {
-        const users = this.getUsers();
-        return users.find(user => user.email === email);
-    }
-
-    addUser(user) {
-        const users = this.getUsers();
-        users.push(user);
-        localStorage.setItem('users', JSON.stringify(users));
-        return user;
-    }
-
-    getJobs() {
-        return JSON.parse(localStorage.getItem('jobs'));
-    }
-
-    addJob(job) {
-        const jobs = this.getJobs();
-        jobs.push(job);
-        localStorage.setItem('jobs', JSON.stringify(jobs));
-        return job;
-    }
-
-    getApplications() {
-        return JSON.parse(localStorage.getItem('applications'));
-    }
-
-    addApplication(application) {
-        const applications = this.getApplications();
-        applications.push(application);
-        localStorage.setItem('applications', JSON.stringify(applications));
-        return application;
-    }
-
-    getTasks() {
-        return JSON.parse(localStorage.getItem('tasks'));
-    }
-
-    addTask(task) {
-        const tasks = this.getTasks();
-        tasks.push(task);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        return task;
-    }
-
-    getInstitutions() {
-        return JSON.parse(localStorage.getItem('institutions'));
-    }
-
-    addInstitution(institution) {
-        const institutions = this.getInstitutions();
-        institutions.push(institution);
-        localStorage.setItem('institutions', JSON.stringify(institutions));
-        return institution;
-    }
-}
-
-// API Class
-class API {
-    constructor() {
-        this.db = new MockDatabase();
-    }
-
-    async registerUser(userData) {
-        return new Promise((resolve, reject) => {
-            if (!userData.email || !userData.password || !userData.name) {
-                reject(new Error('Missing required fields'));
-                return;
-            }
-
-            if (this.db.getUserByEmail(userData.email)) {
-                reject(new Error('User already exists'));
-                return;
-            }
-
-            const user = this.db.addUser(userData);
-            resolve(user);
-        });
-    }
-
-    async loginUser(email, password) {
-        return new Promise((resolve, reject) => {
-            const user = this.db.getUserByEmail(email);
-
-            if (!user) {
-                reject(new Error('User not found'));
-                return;
-            }
-
-            if (user.password !== password) {
-                reject(new Error('Incorrect password'));
-                return;
-            }
-
-            resolve(user);
-        });
-    }
-
-    async getJobs() {
-        return new Promise((resolve) => {
-            resolve(this.db.getJobs());
-        });
-    }
-
-    async addJob(jobData) {
-        return new Promise((resolve) => {
-            const job = this.db.addJob(jobData);
-            resolve(job);
-        });
-    }
-
-    async applyForJob(applicationData) {
-        return new Promise((resolve) => {
-            const application = this.db.addApplication(applicationData);
-            resolve(application);
-        });
-    }
-
-    async getTasks() {
-        return new Promise((resolve) => {
-            resolve(this.db.getTasks());
-        });
-    }
-
-    async addTask(taskData) {
-        return new Promise((resolve) => {
-            const task = this.db.addTask(taskData);
-            resolve(task);
-        });
-    }
-
-    async getInstitutions() {
-        return new Promise((resolve) => {
-            resolve(this.db.getInstitutions());
-        });
-    }
-
-    async addInstitution(institution) {
-        return new Promise((resolve) => {
-            const newInstitution = this.db.addInstitution(institution);
-            resolve(newInstitution);
-        });
-    }
-}
-
-// App State
+// Updated App State with Backend Integration
 class AppState {
     constructor() {
-        this.api = new API();
+        this.api = apiClient;
         this.currentUser = null;
         this.init();
     }
 
-    init() {
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-            this.currentUser = JSON.parse(savedUser);
-            if (this.currentUser.role === 'admin') {
-                this.renderAdminDashboard();
-            } else {
-                this.renderDashboard();
+    async init() {
+        // Check if user is already authenticated
+        if (this.api.token) {
+            try {
+                this.currentUser = await this.api.getCurrentUser();
+                if (this.currentUser.role === 'admin') {
+                    this.renderAdminDashboard();
+                } else {
+                    this.renderDashboard();
+                }
+            } catch (error) {
+                this.api.logout();
+                this.renderHomePage();
             }
         } else {
             this.renderHomePage();
@@ -274,7 +29,6 @@ class AppState {
         try {
             const user = await this.api.registerUser(userData);
             this.currentUser = user;
-            localStorage.setItem('currentUser', JSON.stringify(user));
             if (user.role === 'admin') {
                 this.renderAdminDashboard();
             } else {
@@ -289,7 +43,6 @@ class AppState {
         try {
             const user = await this.api.loginUser(email, password);
             this.currentUser = user;
-            localStorage.setItem('currentUser', JSON.stringify(user));
             if (user.role === 'admin') {
                 this.renderAdminDashboard();
             } else {
@@ -302,7 +55,7 @@ class AppState {
 
     logout() {
         this.currentUser = null;
-        localStorage.removeItem('currentUser');
+        this.api.logout();
         this.renderHomePage();
     }
 
@@ -416,8 +169,9 @@ class AppState {
         document.getElementById('addInstitutionBtn').addEventListener('click', () => {
             const newInstitution = prompt('Enter the name of your institution:');
             if (newInstitution) {
-                this.api.addInstitution(newInstitution);
-                this.loadInstitutions();
+                this.api.addInstitution(newInstitution).then(() => {
+                    this.loadInstitutions();
+                }).catch(error => alert(error.message));
             }
         });
 
@@ -427,23 +181,29 @@ class AppState {
             const profileImage = document.getElementById('profileImage').files[0];
 
             if (institution && occupation) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const user = this.currentUser;
-                    user.institution = institution;
-                    user.occupation = occupation;
-                    user.profileImage = e.target.result;
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    alert('Profile updated successfully!');
-                };
+                const profileData = { institution, occupation };
+                
                 if (profileImage) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profileData.profileImage = e.target.result;
+                        this.api.updateUserProfile(this.currentUser.id, profileData)
+                            .then(() => {
+                                alert('Profile updated successfully!');
+                                this.currentUser.institution = institution;
+                                this.currentUser.occupation = occupation;
+                            })
+                            .catch(error => alert(error.message));
+                    };
                     reader.readAsDataURL(profileImage);
                 } else {
-                    const user = this.currentUser;
-                    user.institution = institution;
-                    user.occupation = occupation;
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    alert('Profile updated successfully!');
+                    this.api.updateUserProfile(this.currentUser.id, profileData)
+                        .then(() => {
+                            alert('Profile updated successfully!');
+                            this.currentUser.institution = institution;
+                            this.currentUser.occupation = occupation;
+                        })
+                        .catch(error => alert(error.message));
                 }
             } else {
                 alert('Please fill in all fields');
@@ -548,7 +308,7 @@ class AppState {
             const dueDate = document.getElementById('taskDueDate').value;
 
             if (student && description && dueDate) {
-                this.assignTask({ student, description, dueDate });
+                this.assignTask({ studentId: student, description, dueDate });
             } else {
                 alert('Please fill in all fields');
             }
@@ -560,180 +320,195 @@ class AppState {
     }
 
     async loadJobs() {
-        const jobs = await this.api.getJobs();
-        const jobList = document.getElementById('jobList');
+        try {
+            const jobs = await this.api.getJobs();
+            const jobList = document.getElementById('jobList');
 
-        if (jobs.length === 0) {
-            jobList.innerHTML = '<p class="text-gray-600">No jobs available at the moment.</p>';
-            return;
-        }
+            if (jobs.length === 0) {
+                jobList.innerHTML = '<p class="text-gray-600">No jobs available at the moment.</p>';
+                return;
+            }
 
-        jobList.innerHTML = jobs.map(job => `
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <h3 class="text-xl font-bold mb-2">${job.title}</h3>
-                <p class="text-gray-600 mb-2">${job.company}</p>
-                <p class="text-gray-600 mb-4">${job.description}</p>
-                <button class="btn-accent px-3 py-1 rounded text-sm apply-btn" data-job-id="${job.id}">Apply</button>
-            </div>
-        `).join('');
+            jobList.innerHTML = jobs.map(job => `
+                <div class="bg-white p-4 rounded shadow mb-4">
+                    <h3 class="text-xl font-bold mb-2">${job.title}</h3>
+                    <p class="text-gray-600 mb-2">${job.company}</p>
+                    <p class="text-gray-600 mb-4">${job.description}</p>
+                    <button class="btn-accent px-3 py-1 rounded text-sm apply-btn" data-job-id="${job._id}">Apply</button>
+                </div>
+            `).join('');
 
-        document.querySelectorAll('.apply-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const jobId = e.target.getAttribute('data-job-id');
-                this.applyForJob(jobId);
+            document.querySelectorAll('.apply-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const jobId = e.target.getAttribute('data-job-id');
+                    this.applyForJob(jobId);
+                });
             });
-        });
+        } catch (error) {
+            console.error('Error loading jobs:', error);
+            document.getElementById('jobList').innerHTML = '<p class="text-red-600">Error loading jobs</p>';
+        }
     }
 
     async loadApplications() {
-        const applications = await this.api.getApplications();
-        const userApplications = applications.filter(app => app.userId === this.currentUser.email);
-        const applicationList = document.getElementById('applicationList');
+        try {
+            const applications = await this.api.getApplications();
+            const applicationList = document.getElementById('applicationList');
 
-        if (userApplications.length === 0) {
-            applicationList.innerHTML = '<p class="text-gray-600">You haven\'t applied to any jobs yet.</p>';
-            return;
+            if (applications.length === 0) {
+                applicationList.innerHTML = '<p class="text-gray-600">You haven\'t applied to any jobs yet.</p>';
+                return;
+            }
+
+            applicationList.innerHTML = applications.map(app => `
+                <div class="bg-white p-4 rounded shadow mb-4">
+                    <h3 class="text-xl font-bold mb-2">${app.jobTitle}</h3>
+                    <p class="text-gray-600 mb-2">${app.company}</p>
+                    <p class="text-gray-600 mb-2">Status: ${app.status}</p>
+                    <p class="text-gray-600 text-sm">Applied on: ${new Date(app.appliedAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading applications:', error);
+            document.getElementById('applicationList').innerHTML = '<p class="text-red-600">Error loading applications</p>';
         }
-
-        applicationList.innerHTML = userApplications.map(app => `
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <h3 class="text-xl font-bold mb-2">${app.jobTitle}</h3>
-                <p class="text-gray-600 mb-2">${app.company}</p>
-                <p class="text-gray-600 mb-2">Status: ${app.status}</p>
-                <p class="text-gray-600 text-sm">Applied on: ${new Date(app.appliedAt).toLocaleDateString()}</p>
-            </div>
-        `).join('');
     }
 
     async loadTasks() {
-        const tasks = await this.api.getTasks();
-        const userTasks = tasks.filter(task => task.student === this.currentUser.email);
-        const taskList = document.getElementById('taskList');
+        try {
+            const tasks = await this.api.getTasks();
+            const taskList = document.getElementById('taskList');
 
-        if (userTasks.length === 0) {
-            taskList.innerHTML = '<p class="text-gray-600">You don\'t have any tasks yet.</p>';
-            return;
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p class="text-gray-600">You don\'t have any tasks yet.</p>';
+                return;
+            }
+
+            taskList.innerHTML = tasks.map(task => `
+                <div class="bg-white p-4 rounded shadow mb-4">
+                    <h3 class="text-xl font-bold mb-2">${task.description}</h3>
+                    <p class="text-gray-600 mb-2">Due: ${new Date(task.dueDate).toLocaleDateString()}</p>
+                    <p class="text-gray-600 mb-2">Status: ${task.status}</p>
+                    <p class="text-gray-600 text-sm">Assigned by: ${task.assignedBy.name}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading tasks:', error);
+            document.getElementById('taskList').innerHTML = '<p class="text-red-600">Error loading tasks</p>';
         }
-
-        taskList.innerHTML = userTasks.map(task => `
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <h3 class="text-xl font-bold mb-2">${task.description}</h3>
-                <p class="text-gray-600 mb-2">Due: ${new Date(task.dueDate).toLocaleDateString()}</p>
-                <p class="text-gray-600 mb-2">Status: ${task.status}</p>
-                <p class="text-gray-600 text-sm">Assigned by: ${task.assignedBy}</p>
-            </div>
-        `).join('');
     }
 
     async loadInstitutions() {
-        const institutions = await this.api.getInstitutions();
-        const institutionSelect = document.getElementById('institution');
+        try {
+            const institutions = await this.api.getInstitutions();
+            const institutionSelect = document.getElementById('institution');
 
-        institutionSelect.innerHTML = '<option value="">Select your institution</option>' +
-            institutions.map(inst => `<option value="${inst}">${inst}</option>`).join('');
+            institutionSelect.innerHTML = '<option value="">Select your institution</option>' +
+                institutions.map(inst => `<option value="${inst.name}">${inst.name}</option>`).join('');
+        } catch (error) {
+            console.error('Error loading institutions:', error);
+        }
     }
 
     async loadUsers() {
-        const users = this.api.db.getUsers();
-        const userList = document.getElementById('userList');
+        try {
+            const users = await this.api.getUsers();
+            const userList = document.getElementById('userList');
 
-        if (users.length === 0) {
-            userList.innerHTML = '<p class="text-gray-600">No users registered yet.</p>';
-            return;
+            if (users.length === 0) {
+                userList.innerHTML = '<p class="text-gray-600">No users registered yet.</p>';
+                return;
+            }
+
+            userList.innerHTML = users.map(user => `
+                <div class="bg-white p-4 rounded shadow mb-4">
+                    <h3 class="text-xl font-bold mb-2">${user.name}</h3>
+                    <p class="text-gray-600 mb-2">${user.email}</p>
+                    <p class="text-gray-600 mb-2">Role: ${user.role}</p>
+                    <p class="text-gray-600 mb-2">Institution: ${user.institution || 'Not set'}</p>
+                    <p class="text-gray-600 mb-2">Occupation: ${user.occupation || 'Not set'}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading users:', error);
+            document.getElementById('userList').innerHTML = '<p class="text-red-600">Error loading users</p>';
         }
-
-        userList.innerHTML = users.map(user => `
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <h3 class="text-xl font-bold mb-2">${user.name}</h3>
-                <p class="text-gray-600 mb-2">${user.email}</p>
-                <p class="text-gray-600 mb-2">Role: ${user.role}</p>
-                <p class="text-gray-600 mb-2">Institution: ${user.institution || 'Not set'}</p>
-                <p class="text-gray-600 mb-2">Occupation: ${user.occupation || 'Not set'}</p>
-            </div>
-        `).join('');
     }
 
     async loadAllApplications() {
-        const applications = await this.api.getApplications();
-        const applicationList = document.getElementById('allApplicationsList');
+        try {
+            const applications = await this.api.getAllApplications();
+            const applicationList = document.getElementById('allApplicationsList');
 
-        if (applications.length === 0) {
-            applicationList.innerHTML = '<p class="text-gray-600">No applications submitted yet.</p>';
-            return;
+            if (applications.length === 0) {
+                applicationList.innerHTML = '<p class="text-gray-600">No applications submitted yet.</p>';
+                return;
+            }
+
+            applicationList.innerHTML = applications.map(app => `
+                <div class="bg-white p-4 rounded shadow mb-4">
+                    <h3 class="text-xl font-bold mb-2">${app.jobTitle}</h3>
+                    <p class="text-gray-600 mb-2">${app.company}</p>
+                    <p class="text-gray-600 mb-2">Applied by: ${app.userId.name}</p>
+                    <p class="text-gray-600 mb-2">Status: ${app.status}</p>
+                    <p class="text-gray-600 text-sm">Applied on: ${new Date(app.appliedAt).toLocaleDateString()}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Error loading applications:', error);
+            document.getElementById('allApplicationsList').innerHTML = '<p class="text-red-600">Error loading applications</p>';
         }
-
-        applicationList.innerHTML = applications.map(app => `
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <h3 class="text-xl font-bold mb-2">${app.jobTitle}</h3>
-                <p class="text-gray-600 mb-2">${app.company}</p>
-                <p class="text-gray-600 mb-2">Applied by: ${app.userId}</p>
-                <p class="text-gray-600 mb-2">Status: ${app.status}</p>
-                <p class="text-gray-600 text-sm">Applied on: ${new Date(app.appliedAt).toLocaleDateString()}</p>
-            </div>
-        `).join('');
     }
 
     async loadStudentsForTasks() {
-        const users = this.api.db.getUsers();
-        const students = users.filter(user => user.role === 'student');
-        const studentSelect = document.getElementById('taskStudent');
+        try {
+            const users = await this.api.getUsers();
+            const students = users.filter(user => user.role === 'student');
+            const studentSelect = document.getElementById('taskStudent');
 
-        studentSelect.innerHTML = '<option value="">Select a student</option>' +
-            students.map(student => `<option value="${student.email}">${student.name}</option>`).join('');
+            studentSelect.innerHTML = '<option value="">Select a student</option>' +
+                students.map(student => `<option value="${student._id}">${student.name}</option>`).join('');
+        } catch (error) {
+            console.error('Error loading students:', error);
+        }
     }
 
     async addJob(jobData) {
-        const job = {
-            id: Date.now().toString(),
-            ...jobData
-        };
+        try {
+            await this.api.createJob(jobData);
+            alert('Job added successfully!');
 
-        await this.api.addJob(job);
-        alert('Job added successfully!');
+            document.getElementById('jobTitle').value = '';
+            document.getElementById('jobCompany').value = '';
+            document.getElementById('jobDescription').value = '';
 
-        document.getElementById('jobTitle').value = '';
-        document.getElementById('jobCompany').value = '';
-        document.getElementById('jobDescription').value = '';
+            this.loadJobs();
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     async assignTask(taskData) {
-        const task = {
-            id: Date.now().toString(),
-            assignedBy: this.currentUser.email,
-            status: 'Pending',
-            ...taskData
-        };
+        try {
+            await this.api.createTask(taskData);
+            alert('Task assigned successfully!');
 
-        await this.api.addTask(task);
-        alert('Task assigned successfully!');
-
-        document.getElementById('taskStudent').value = '';
-        document.getElementById('taskDescription').value = '';
-        document.getElementById('taskDueDate').value = '';
+            document.getElementById('taskStudent').value = '';
+            document.getElementById('taskDescription').value = '';
+            document.getElementById('taskDueDate').value = '';
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     async applyForJob(jobId) {
-        const jobs = await this.api.getJobs();
-        const job = jobs.find(j => j.id === jobId);
-
-        if (!job) {
-            alert('Job not found');
-            return;
+        try {
+            await this.api.applyForJob(jobId);
+            this.loadApplications();
+            alert('Application submitted successfully!');
+        } catch (error) {
+            alert(error.message);
         }
-
-        const application = {
-            id: Date.now().toString(),
-            userId: this.currentUser.email,
-            jobId: job.id,
-            jobTitle: job.title,
-            company: job.company,
-            status: 'Applied',
-            appliedAt: new Date().toISOString()
-        };
-
-        await this.api.applyForJob(application);
-        this.loadApplications();
-        alert('Application submitted successfully!');
     }
 }
 
