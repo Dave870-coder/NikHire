@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -13,12 +14,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection
+// MongoDB Connection (try real DB first, fall back to in-memory)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/nikhire';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✓ MongoDB connected'))
-  .catch(err => console.log('✗ MongoDB connection error:', err.message));
+async function connectDB() {
+  try {
+    await mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('✓ MongoDB connected');
+    return { type: 'real', uri: MONGODB_URI };
+  } catch (err) {
+    console.warn('✗ MongoDB connection failed:', err.message);
+    console.warn('→ Falling back to in-memory MongoDB (mongodb-memory-server)');
+
+    const mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('✓ Connected to in-memory MongoDB');
+    return { type: 'memory', uri };
+  }
+}
 
 // ==================== DATABASE SCHEMAS ====================
 
@@ -549,7 +563,18 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  await initializeInstitutions();
-});
+async function startServer() {
+  try {
+    await connectDB();
+    await initializeInstitutions();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
